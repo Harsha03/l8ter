@@ -1,0 +1,41 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Local project notes (not for public repo)
+CLAUDE.md
+
+# macOS
+.DS_Store
+
+# Xcode — build artifacts
+build/
+DerivedData/
+*.xcuserstate
+*.xcworkspacedata.user
+xcuserdata/
+
+# Xcode — archives
+*.xcarchive
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# Swift package manager
+.swiftpm/
+.build/
+Packages/
+Package.resolved
+
+# CocoaPods (not used but in case)
+Pods/
+
+# Carthage (not used but in case)
+Carthage/Build/
+
+# Fastlane (not used but in case)
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
