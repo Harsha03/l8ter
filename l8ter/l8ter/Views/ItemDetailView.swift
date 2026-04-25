@@ -2,8 +2,8 @@ import SwiftUI
 import SwiftData
 import MapKit
 
-/// Detail view for a saved item. Read-only except for tags and notes,
-/// which can be edited inline.
+/// Detail view for a saved item. Hero + stacked sections layout.
+/// Tags and notes are inline-editable.
 struct ItemDetailView: View {
     @Environment(\.modelContext) private var context
     @Bindable var item: Item
@@ -11,120 +11,35 @@ struct ItemDetailView: View {
     @State private var notesDraft: String = ""
 
     var body: some View {
-        Form {
-            if let path = item.thumbnailPath,
-               let url = ThumbnailStore.absoluteURL(for: path),
-               let data = try? Data(contentsOf: url),
-               let uiImage = UIImage(data: data) {
-                Section {
-                    Image(uiImage: uiImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxHeight: 280)
+        ZStack {
+            Color.bgBase.ignoresSafeArea()
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    hero
+                    chipRow
+                    sections
                 }
             }
-
-            Section("Summary") {
-                labeled("title", item.title)
-                labeled("category", item.builtInCategory?.label ?? item.category.capitalized)
-                labeled("confidence", String(format: "%.2f", item.aiConfidence))
-                if item.needsReview {
-                    Text("Flagged for review")
-                        .font(.caption)
-                        .foregroundStyle(.orange)
-                }
-                if let summary = item.summary, !summary.isEmpty {
-                    Text(summary)
-                        .font(.callout)
-                        .padding(.vertical, 4)
-                }
-            }
-
-            if let m = item.movieDetails {
-                Section("Movie") {
-                    labeled("year", m.year.map(String.init))
-                    labeled("director", m.director)
-                    labeled("genre", m.genre)
-                    labeled("where to watch", m.whereToWatch)
-                }
-            }
-
-            if let s = item.showDetails {
-                Section("Show") {
-                    labeled("creator", s.creator)
-                    labeled("network", s.network)
-                    labeled("genre", s.genre)
-                    labeled("where to watch", s.whereToWatch)
-                }
-            }
-
-            if let details = item.restaurantDetails {
-                Section("Restaurant") {
-                    labeled("address", details.address)
-                    addressSourceHint(details)
-                    labeled("cuisine", details.cuisine)
-                    if !details.notableDishes.isEmpty {
-                        labeled("dishes", details.notableDishes.joined(separator: ", "))
-                    }
-                    if let lat = details.latitude, let lon = details.longitude {
-                        labeled("coords", String(format: "%.5f, %.5f", lat, lon))
-                        Map(initialPosition: .region(MKCoordinateRegion(
-                            center: CLLocationCoordinate2D(latitude: lat, longitude: lon),
-                            latitudinalMeters: 500,
-                            longitudinalMeters: 500
-                        ))) {
-                            Marker(item.title, coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon))
-                                .tint(.red)
-                        }
-                        .frame(height: 180)
-                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                        Button {
-                            openInMaps(lat: lat, lon: lon)
-                        } label: {
-                            Label("Open in Maps", systemImage: "map")
-                        }
-                    } else {
-                        Text("Not geocoded")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-
-            Section("Tags") {
-                TagEditor(tags: $item.tags)
-                    .onChange(of: item.tags) { _, _ in try? context.save() }
-            }
-
-            Section("Notes") {
-                TextField("Add a note…", text: $notesDraft, axis: .vertical)
-                    .lineLimit(3, reservesSpace: true)
-                    .onAppear { notesDraft = item.notes ?? "" }
-                    .onChange(of: notesDraft) { _, newValue in
-                        item.notes = newValue.isEmpty ? nil : newValue
-                        try? context.save()
-                    }
-            }
-
-            Section("Source") {
-                labeled("platform", item.sourcePlatform)
-                if let author = item.sourceAuthor {
-                    labeled("author", "@\(author)")
-                }
-                Link(item.sourceURL.absoluteString, destination: item.sourceURL)
-                    .font(.caption)
-            }
-
-            if let caption = item.caption, !caption.isEmpty {
-                Section("Caption") {
-                    Text(caption)
-                        .font(.caption)
-                        .textSelection(.enabled)
+            if hasCoordinates {
+                VStack {
+                    Spacer()
+                    bottomActions
+                        .padding(.horizontal, DSSpace.xxl)
+                        .padding(.bottom, DSSpace.xxl)
+                        .background(
+                            LinearGradient(
+                                colors: [Color.bgBase.opacity(0), Color.bgBase],
+                                startPoint: .top, endPoint: .bottom
+                            )
+                            .ignoresSafeArea(.all, edges: .bottom)
+                        )
                 }
             }
         }
-        .navigationTitle(item.title)
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Color.bgBase, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -132,52 +47,256 @@ struct ItemDetailView: View {
                     try? context.save()
                 } label: {
                     Image(systemName: item.isArchived ? "tray.and.arrow.up" : "archivebox")
+                        .foregroundStyle(Color.textSecondary)
                 }
             }
+        }
+        .onAppear { notesDraft = item.notes ?? "" }
+    }
+
+    // MARK: - Hero
+
+    private var hero: some View {
+        ZStack(alignment: .bottomLeading) {
+            heroImage
+                .frame(height: 240)
+                .frame(maxWidth: .infinity)
+                .clipped()
+                .overlay(
+                    LinearGradient(
+                        colors: [Color.clear, Color.bgBase],
+                        startPoint: .top, endPoint: .bottom
+                    )
+                )
+
+            VStack(alignment: .leading, spacing: 6) {
+                MetaLabel(
+                    text: heroMetaText,
+                    pulsing: isNearby,
+                    tone: .accent
+                )
+                Text(item.title)
+                    .font(.dsHeroTitle)
+                    .tracking(DSTracking.heroTitle)
+                    .foregroundStyle(Color.textPrimary)
+                    .multilineTextAlignment(.leading)
+            }
+            .padding(.horizontal, DSSpace.xxl)
+            .padding(.bottom, DSSpace.lg)
         }
     }
 
     @ViewBuilder
-    private func addressSourceHint(_ details: RestaurantDetails) -> some View {
-        switch details.addressSource {
-        case .web:
-            Label("Verified via web search", systemImage: "checkmark.seal")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-        case .webCorrected:
-            VStack(alignment: .leading, spacing: 2) {
-                Label("Updated from web search", systemImage: "arrow.triangle.2.circlepath")
-                    .font(.caption2)
-                    .foregroundStyle(.secondary)
-                if let original = details.postProvidedAddress {
-                    Text("Post said: \(original)")
-                        .font(.caption2)
-                        .foregroundStyle(.tertiary)
-                }
-            }
-        case .post, .none:
-            EmptyView()
+    private var heroImage: some View {
+        if let path = item.thumbnailPath,
+           let url = ThumbnailStore.absoluteURL(for: path),
+           let data = try? Data(contentsOf: url),
+           let uiImage = UIImage(data: data) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFill()
+        } else {
+            Rectangle()
+                .fill(Color.bgRaised)
         }
     }
 
-    private func openInMaps(lat: Double, lon: Double) {
+    // MARK: - Chip row
+
+    private var chipRow: some View {
+        HStack(spacing: 6) {
+            Chip(label: (item.builtInCategory?.label ?? item.category).lowercased(), tone: .accent)
+            ForEach(item.tags.prefix(4), id: \.self) { tag in
+                Chip(label: tag.lowercased())
+            }
+        }
+        .padding(.horizontal, DSSpace.xxl)
+        .padding(.top, DSSpace.lg)
+    }
+
+    // MARK: - Sections
+
+    @ViewBuilder
+    private var sections: some View {
+        if let r = item.restaurantDetails {
+            section("Address") {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text(r.address ?? "—")
+                        .font(.dsBody)
+                        .foregroundStyle(Color.textPrimary)
+                    if let hint = addressVerificationHint(for: r) {
+                        Text(hint)
+                            .font(.dsMetaSmall)
+                            .foregroundStyle(Color.textTertiary)
+                    }
+                    if let lat = r.latitude, let lon = r.longitude {
+                        Map(initialPosition: .region(MKCoordinateRegion(
+                            center: CLLocationCoordinate2D(latitude: lat, longitude: lon),
+                            latitudinalMeters: 500, longitudinalMeters: 500
+                        ))) {
+                            Marker(item.title, coordinate: CLLocationCoordinate2D(latitude: lat, longitude: lon))
+                                .tint(Color.accent)
+                        }
+                        .frame(height: 160)
+                        .clipShape(RoundedRectangle(cornerRadius: DSRadius.card))
+                        .padding(.top, 4)
+                    }
+                }
+            }
+            if !r.notableDishes.isEmpty {
+                section("Notable") {
+                    VStack(spacing: 0) {
+                        ForEach(r.notableDishes, id: \.self) { dish in
+                            KeyValueRow(key: dish.lowercased().replacingOccurrences(of: " ", with: "-"), value: "★")
+                        }
+                    }
+                }
+            }
+        }
+
+        if let m = item.movieDetails {
+            section("Movie") {
+                VStack(spacing: 0) {
+                    KeyValueRow(key: "year",      value: m.year.map(String.init))
+                    KeyValueRow(key: "director",  value: m.director)
+                    KeyValueRow(key: "genre",     value: m.genre)
+                    KeyValueRow(key: "watch on",  value: m.whereToWatch)
+                }
+            }
+        }
+
+        if let s = item.showDetails {
+            section("Show") {
+                VStack(spacing: 0) {
+                    KeyValueRow(key: "creator",   value: s.creator)
+                    KeyValueRow(key: "network",   value: s.network)
+                    KeyValueRow(key: "genre",     value: s.genre)
+                    KeyValueRow(key: "watch on",  value: s.whereToWatch)
+                }
+            }
+        }
+
+        if let summary = item.summary, !summary.isEmpty {
+            section("Summary") {
+                Text(summary)
+                    .font(.dsBody)
+                    .foregroundStyle(Color.textPrimary)
+            }
+        }
+
+        section("Tags") {
+            TagEditor(tags: $item.tags)
+                .onChange(of: item.tags) { _, _ in try? context.save() }
+        }
+
+        section("Notes") {
+            TextField("Add a note…", text: $notesDraft, axis: .vertical)
+                .font(.dsBody)
+                .foregroundStyle(Color.textPrimary)
+                .lineLimit(3, reservesSpace: true)
+                .onChange(of: notesDraft) { _, newValue in
+                    item.notes = newValue.isEmpty ? nil : newValue
+                    try? context.save()
+                }
+        }
+
+        section("Source") {
+            VStack(alignment: .leading, spacing: 6) {
+                if let author = item.sourceAuthor {
+                    KeyValueRow(key: "author", value: "@\(author)")
+                }
+                Link(destination: item.sourceURL) {
+                    Text(item.sourceURL.absoluteString)
+                        .font(.dsMetaSmall)
+                        .foregroundStyle(Color.accent)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
+            }
+        }
+
+        // Spacer at the bottom so the pinned CTA doesn't cover content.
+        if hasCoordinates {
+            Color.clear.frame(height: 90)
+        } else {
+            Color.clear.frame(height: 22)
+        }
+    }
+
+    @ViewBuilder
+    private func section<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: DSSpace.sm) {
+            Rectangle()
+                .fill(Color.borderHairline)
+                .frame(height: 0.5)
+                .padding(.top, DSSpace.xl)
+            VStack(alignment: .leading, spacing: DSSpace.sm) {
+                SectionLabel(text: title)
+                content()
+            }
+            .padding(.horizontal, DSSpace.xxl)
+            .padding(.top, DSSpace.lg)
+        }
+    }
+
+    // MARK: - Bottom actions
+
+    private var bottomActions: some View {
+        HStack(spacing: DSSpace.md) {
+            PrimaryButton(title: "Open in Maps", systemImage: "play.fill") {
+                openInMaps()
+            }
+            GhostButton(title: "↗", systemImage: nil) {
+                ShareActivity.share(url: item.sourceURL)
+            }
+            .frame(width: 56)
+        }
+    }
+
+    // MARK: - Helpers
+
+    private var hasCoordinates: Bool {
+        item.restaurantDetails?.latitude != nil && item.restaurantDetails?.longitude != nil
+    }
+
+    private var isNearby: Bool {
+        // Reserved for future live-distance hookup. Off in v1.
+        false
+    }
+
+    private var heroMetaText: String {
+        let category = (item.builtInCategory?.label ?? item.category).uppercased()
+        let formatter = DateFormatter()
+        formatter.dateFormat = "MM.dd"
+        return "\(category) · \(formatter.string(from: item.dateAdded))"
+    }
+
+    private func addressVerificationHint(for r: RestaurantDetails) -> String? {
+        switch r.addressSource {
+        case .web:          return "verified · web search ✓"
+        case .webCorrected: return "updated · web search ✓"
+        case .post, .none:  return nil
+        }
+    }
+
+    private func openInMaps() {
+        guard let lat = item.restaurantDetails?.latitude,
+              let lon = item.restaurantDetails?.longitude else { return }
         let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
         let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coord))
         mapItem.name = item.title
         mapItem.openInMaps()
     }
+}
 
-    @ViewBuilder
-    private func labeled(_ key: String, _ value: String?) -> some View {
-        HStack(alignment: .top) {
-            Text(key)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            Spacer()
-            Text(value ?? "—")
-                .font(.caption)
-                .multilineTextAlignment(.trailing)
-                .textSelection(.enabled)
-        }
+/// Tiny wrapper for sharing a URL via UIActivityViewController.
+enum ShareActivity {
+    static func share(url: URL) {
+        let av = UIActivityViewController(activityItems: [url], applicationActivities: nil)
+        guard let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let root = scene.windows.first?.rootViewController else { return }
+        var top = root
+        while let presented = top.presentedViewController { top = presented }
+        top.present(av, animated: true)
     }
 }
