@@ -74,6 +74,8 @@ struct l8terApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .preferredColorScheme(.dark)
+                .tint(Color.accent)
         }
         .modelContainer(container)
     }
