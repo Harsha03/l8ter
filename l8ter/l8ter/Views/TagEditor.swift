@@ -8,27 +8,36 @@ struct TagEditor: View {
     @State private var draft: String = ""
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: DSSpace.sm) {
             if !tags.isEmpty {
                 FlowLayout(spacing: 6) {
                     ForEach(tags, id: \.self) { tag in
-                        HStack(spacing: 4) {
-                            Text(tag)
-                                .font(.caption)
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.caption2)
-                                .foregroundStyle(.secondary)
+                        Button {
+                            remove(tag)
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text(tag.lowercased())
+                                    .font(.dsMetaSmall)
+                                    .foregroundStyle(Color.textSecondary)
+                                Image(systemName: "xmark")
+                                    .font(.system(size: 8, weight: .semibold))
+                                    .foregroundStyle(Color.textTertiary)
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: DSRadius.chip)
+                                    .strokeBorder(Color.borderQuiet, lineWidth: 0.5)
+                            )
                         }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 4)
-                        .background(Color.secondary.opacity(0.15))
-                        .clipShape(Capsule())
-                        .onTapGesture { remove(tag) }
+                        .buttonStyle(.plain)
                     }
                 }
             }
 
-            TextField("Add tag", text: $draft)
+            TextField("add tag", text: $draft)
+                .font(.dsMetaSmall)
+                .foregroundStyle(Color.textPrimary)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
                 .onSubmit(commitDraft)
