@@ -10,65 +10,99 @@ struct ManageCategoriesView: View {
     @State private var showingNew = false
 
     var body: some View {
-        List {
-            Section {
-                ForEach(BuiltInCategory.allCases, id: \.self) { cat in
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(cat.label).font(.body)
-                        Text(cat.defaultDescription)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.vertical, 2)
-                }
-            } header: {
-                Text("Built-in")
-            } footer: {
-                Text("Built-in categories can't be edited or removed.")
-            }
-
-            Section {
-                if customCategories.isEmpty {
-                    Text("None yet. Tap + to create one.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                } else {
-                    ForEach(customCategories) { cat in
-                        NavigationLink {
-                            CategoryEditView(category: cat)
-                        } label: {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(cat.name.capitalized).font(.body)
-                                Text(cat.prompt)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                    .lineLimit(2)
+        ZStack {
+            Color.bgBase.ignoresSafeArea()
+            List {
+                Section {
+                    ForEach(BuiltInCategory.allCases, id: \.self) { cat in
+                        HStack(alignment: .top, spacing: DSSpace.sm) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                HStack(spacing: 8) {
+                                    Text(cat.label)
+                                        .font(.dsBody)
+                                        .foregroundStyle(Color.textPrimary)
+                                    if cat == .restaurant || cat == .movie || cat == .show {
+                                        Text(cat.rawValue.uppercased())
+                                            .font(.dsMetaTiny)
+                                            .tracking(DSTracking.metaTiny)
+                                            .foregroundStyle(Color.accent)
+                                    }
+                                }
+                                Text(cat.defaultDescription)
+                                    .font(.dsMetaSmall)
+                                    .foregroundStyle(Color.textSecondary)
                             }
-                            .padding(.vertical, 2)
+                            Spacer(minLength: 0)
                         }
+                        .padding(.vertical, 4)
+                        .listRowBackground(Color.bgBase)
                     }
-                    .onDelete(perform: delete)
+                } header: {
+                    SectionLabel(text: "Built-in (\(BuiltInCategory.allCases.count))")
+                } footer: {
+                    Text("Built-in categories can't be edited or removed.")
+                        .font(.dsMetaSmall)
+                        .foregroundStyle(Color.textTertiary)
                 }
-            } header: {
-                Text("Your categories")
-            } footer: {
-                Text("The description teaches Claude when to pick this category. Write a clear sentence or two: what qualifies, what does not.")
+
+                Section {
+                    if customCategories.isEmpty {
+                        Text("None yet. Tap + to create one.")
+                            .font(.dsMetaSmall)
+                            .foregroundStyle(Color.textTertiary)
+                            .listRowBackground(Color.bgBase)
+                    } else {
+                        ForEach(customCategories) { cat in
+                            NavigationLink {
+                                CategoryEditView(category: cat)
+                            } label: {
+                                VStack(alignment: .leading, spacing: 3) {
+                                    HStack(spacing: 8) {
+                                        Text(cat.name.capitalized)
+                                            .font(.dsBody)
+                                            .foregroundStyle(Color.textPrimary)
+                                        Chip(label: "custom", tone: .accent)
+                                    }
+                                    Text(cat.prompt)
+                                        .font(.dsMetaSmall)
+                                        .foregroundStyle(Color.textSecondary)
+                                        .lineLimit(2)
+                                }
+                                .padding(.vertical, 4)
+                            }
+                            .listRowBackground(Color.bgBase)
+                        }
+                        .onDelete(perform: delete)
+                    }
+                } header: {
+                    SectionLabel(text: "Custom (\(customCategories.count))")
+                } footer: {
+                    Text("The description teaches Claude when to pick this category.")
+                        .font(.dsMetaSmall)
+                        .foregroundStyle(Color.textTertiary)
+                }
             }
+            .listStyle(.plain)
+            .scrollContentBackground(.hidden)
+            .background(Color.bgBase)
         }
         .navigationTitle("Categories")
+        .toolbarBackground(Color.bgBase, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     showingNew = true
                 } label: {
-                    Image(systemName: "plus")
+                    Text("+ ADD")
+                        .font(.dsMetaCaps)
+                        .tracking(DSTracking.metaCaps)
+                        .foregroundStyle(Color.accent)
                 }
             }
         }
         .sheet(isPresented: $showingNew) {
-            NavigationStack {
-                CategoryEditView(category: nil)
-            }
+            NavigationStack { CategoryEditView(category: nil) }
         }
     }
 
@@ -93,43 +127,58 @@ struct CategoryEditView: View {
     @State private var errorMessage: String?
 
     var body: some View {
-        Form {
-            Section {
-                TextField("Name", text: $name)
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.never)
-            } footer: {
-                Text("Short, lowercase, one or two words.")
-            }
-
-            Section {
-                TextField("Description", text: $prompt, axis: .vertical)
-                    .lineLimit(4, reservesSpace: true)
-            } header: {
-                Text("Description")
-            } footer: {
-                Text("Tell Claude when to pick this category. Example: 'A specific coffee shop I want to try — espresso bars, roasters, pour-over spots. Not general food content.'")
-            }
-
-            if let errorMessage {
+        ZStack {
+            Color.bgBase.ignoresSafeArea()
+            Form {
                 Section {
-                    Text(errorMessage)
-                        .font(.caption)
-                        .foregroundStyle(.red)
+                    TextField("Name", text: $name)
+                        .font(.dsBody)
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.never)
+                } footer: {
+                    Text("Short, lowercase, one or two words.")
+                        .font(.dsMetaSmall)
+                        .foregroundStyle(Color.textTertiary)
+                }
+
+                Section {
+                    TextField("Description", text: $prompt, axis: .vertical)
+                        .font(.dsBody)
+                        .lineLimit(4, reservesSpace: true)
+                } header: {
+                    SectionLabel(text: "Description")
+                } footer: {
+                    Text("Tell Claude when to pick this category. Example: 'A specific coffee shop I want to try — espresso bars, roasters, pour-over spots. Not general food content.'")
+                        .font(.dsMetaSmall)
+                        .foregroundStyle(Color.textTertiary)
+                }
+
+                if let errorMessage {
+                    Section {
+                        Text(errorMessage)
+                            .font(.dsMetaSmall)
+                            .foregroundStyle(Color.accent)
+                    }
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Color.bgBase)
         }
         .navigationTitle(category == nil ? "New Category" : "Edit Category")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Color.bgBase, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Save") { save() }
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty
                               || prompt.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .foregroundStyle(Color.accent)
             }
             ToolbarItem(placement: .topBarLeading) {
                 if category == nil {
                     Button("Cancel") { dismiss() }
+                        .foregroundStyle(Color.textSecondary)
                 }
             }
         }
