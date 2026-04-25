@@ -6,6 +6,9 @@
 # Local project notes (not for public repo)
 CLAUDE.md
 
+# Superpowers brainstorming session files (mockups, server state)
+.superpowers/
+
 # macOS
 .DS_Store
 
