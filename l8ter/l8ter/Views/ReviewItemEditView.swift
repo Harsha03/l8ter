@@ -40,80 +40,91 @@ struct ReviewItemEditView: View {
     }
 
     var body: some View {
-        Form {
-            Section("Basics") {
-                TextField("Title", text: $title)
-                Picker("Category", selection: $category) {
-                    ForEach(options) { opt in
-                        Text(opt.label).tag(opt.name)
+        ZStack {
+            Color.bgBase.ignoresSafeArea()
+            Form {
+                Section {
+                    TextField("Title", text: $title)
+                        .font(.dsBody)
+                    Picker("Category", selection: $category) {
+                        ForEach(options) { opt in
+                            Text(opt.label).tag(opt.name)
+                        }
                     }
+                } header: {
+                    SectionLabel(text: "Basics")
                 }
-            }
 
-            if let builtIn = BuiltInCategory(rawValue: category) {
-                switch builtIn {
-                case .restaurant:
-                    Section("Restaurant") {
-                        TextField("Address", text: $restaurantAddress, axis: .vertical)
-                        TextField("Cuisine", text: $restaurantCuisine)
-                        TextField("Notable dishes (comma-separated)", text: $restaurantDishes, axis: .vertical)
+                if let builtIn = BuiltInCategory(rawValue: category) {
+                    switch builtIn {
+                    case .restaurant:
+                        Section {
+                            TextField("Address", text: $restaurantAddress, axis: .vertical)
+                            TextField("Cuisine", text: $restaurantCuisine)
+                            TextField("Notable dishes (comma-separated)", text: $restaurantDishes, axis: .vertical)
+                        } header: { SectionLabel(text: "Restaurant") }
+                    case .movie:
+                        Section {
+                            TextField("Year", text: $movieYear)
+                                .keyboardType(.numberPad)
+                            TextField("Director", text: $movieDirector)
+                            TextField("Genre", text: $movieGenre)
+                            TextField("Where to watch", text: $movieWhereToWatch)
+                        } header: { SectionLabel(text: "Movie") }
+                    case .show:
+                        Section {
+                            TextField("Creator", text: $showCreator)
+                            TextField("Network", text: $showNetwork)
+                            TextField("Genre", text: $showGenre)
+                            TextField("Where to watch", text: $showWhereToWatch)
+                        } header: { SectionLabel(text: "Show") }
+                    case .activity, .recipe, .place, .book, .product, .uncategorized:
+                        Section {
+                            TextField("Short description", text: $summary, axis: .vertical)
+                                .lineLimit(3, reservesSpace: true)
+                        } header: { SectionLabel(text: "Summary") }
                     }
-                case .movie:
-                    Section("Movie") {
-                        TextField("Year", text: $movieYear)
-                            .keyboardType(.numberPad)
-                        TextField("Director", text: $movieDirector)
-                        TextField("Genre", text: $movieGenre)
-                        TextField("Where to watch", text: $movieWhereToWatch)
-                    }
-                case .show:
-                    Section("Show") {
-                        TextField("Creator", text: $showCreator)
-                        TextField("Network", text: $showNetwork)
-                        TextField("Genre", text: $showGenre)
-                        TextField("Where to watch", text: $showWhereToWatch)
-                    }
-                case .activity, .recipe, .place, .book, .product, .uncategorized:
-                    Section("Summary") {
+                } else {
+                    Section {
                         TextField("Short description", text: $summary, axis: .vertical)
                             .lineLimit(3, reservesSpace: true)
+                    } header: { SectionLabel(text: "Summary") }
+                }
+
+                Section {
+                    Button {
+                        Task { await rerunExtraction() }
+                    } label: {
+                        if isRerunning {
+                            HStack { ProgressView().tint(Color.accent); Text("Re-running…") }
+                        } else {
+                            Label("Re-run extraction", systemImage: "arrow.clockwise")
+                                .foregroundStyle(Color.accent)
+                        }
+                    }
+                    .disabled(isRerunning)
+
+                    if let rerunError {
+                        Text(rerunError)
+                            .font(.dsMetaSmall)
+                            .foregroundStyle(Color.accent)
                     }
                 }
-            } else {
-                // Custom category — freeform summary only.
-                Section("Summary") {
-                    TextField("Short description", text: $summary, axis: .vertical)
-                        .lineLimit(3, reservesSpace: true)
-                }
             }
-
-            Section {
-                Button {
-                    Task { await rerunExtraction() }
-                } label: {
-                    if isRerunning {
-                        HStack { ProgressView(); Text("Re-running…") }
-                    } else {
-                        Label("Re-run extraction", systemImage: "arrow.clockwise")
-                    }
-                }
-                .disabled(isRerunning)
-
-                if let rerunError {
-                    Text(rerunError)
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                }
-            }
+            .scrollContentBackground(.hidden)
+            .background(Color.bgBase)
         }
         .navigationTitle("Edit")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Color.bgBase, for: .navigationBar)
+        .toolbarColorScheme(.dark, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Done") {
                     save(clearingReview: true)
                     dismiss()
                 }
+                .foregroundStyle(Color.accent)
             }
         }
         .onAppear(perform: load)
