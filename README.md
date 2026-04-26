@@ -5,6 +5,51 @@ categorizes it and extracts the interesting fields → it shows up in a
 searchable list, on a map (for restaurants), or nudges me when I walk
 past a saved spot.
 
+## Demo
+
+End-to-end: paste a TikTok URL, Claude classifies and extracts, the entry
+lands in the saved list with a verified address, a map preview, and a
+hand-off to Apple Maps.
+
+<table>
+  <tr>
+    <td align="center" width="25%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.37.png" width="220" /><br/>
+      <sub>1 · Paste a TikTok URL</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.47.png" width="220" /><br/>
+      <sub>2 · oEmbed → Claude</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.50.png" width="220" /><br/>
+      <sub>3 · Web-verify the address</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.55.png" width="220" /><br/>
+      <sub>4 · Saved · 0.95 confidence</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="25%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.10.png" width="220" /><br/>
+      <sub>5 · Saved list, filterable</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.24.png" width="220" /><br/>
+      <sub>6 · Detail · address + map</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.39.png" width="220" /><br/>
+      <sub>7 · Notable dishes, tags</sub>
+    </td>
+    <td align="center" width="25%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.07.01.png" width="220" /><br/>
+      <sub>8 · Open in Apple Maps</sub>
+    </td>
+  </tr>
+</table>
+
 ## What it does today
 
 - **Capture**: paste a TikTok URL (a silent share-sheet extension is on
