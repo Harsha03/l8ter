@@ -11,51 +11,67 @@ End-to-end: paste a TikTok URL, Claude classifies and extracts, the entry
 lands in the saved list with a verified address, a map preview, and a
 hand-off to Apple Maps.
 
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.37.png" width="320" /><br/>
-      <sub><b>1 · Paste a TikTok URL</b></sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.47.png" width="320" /><br/>
-      <sub><b>2 · oEmbed → Claude</b></sub>
-    </td>
-  </tr>
-  <tr><td colspan="2">&nbsp;</td></tr>
-  <tr>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.50.png" width="320" /><br/>
-      <sub><b>3 · Web-verify the address</b></sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.55.png" width="320" /><br/>
-      <sub><b>4 · Saved · 0.95 confidence</b></sub>
-    </td>
-  </tr>
-  <tr><td colspan="2">&nbsp;</td></tr>
-  <tr>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.10.png" width="320" /><br/>
-      <sub><b>5 · Saved list, filterable</b></sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.24.png" width="320" /><br/>
-      <sub><b>6 · Detail · address + map</b></sub>
-    </td>
-  </tr>
-  <tr><td colspan="2">&nbsp;</td></tr>
-  <tr>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.39.png" width="320" /><br/>
-      <sub><b>7 · Notable dishes, tags</b></sub>
-    </td>
-    <td align="center" width="50%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.07.01.png" width="320" /><br/>
-      <sub><b>8 · Open in Apple Maps</b></sub>
-    </td>
-  </tr>
-</table>
+### 1 · Paste a TikTok URL
+
+<p align="center">
+  <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.37.png" width="380" />
+</p>
+
+&nbsp;
+
+### 2 · oEmbed → Claude
+
+<p align="center">
+  <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.47.png" width="380" />
+</p>
+
+&nbsp;
+
+### 3 · Web-verify the address
+
+<p align="center">
+  <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.50.png" width="380" />
+</p>
+
+&nbsp;
+
+### 4 · Saved · 0.95 confidence
+
+<p align="center">
+  <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.55.png" width="380" />
+</p>
+
+&nbsp;
+
+### 5 · Saved list, filterable
+
+<p align="center">
+  <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.10.png" width="380" />
+</p>
+
+&nbsp;
+
+### 6 · Detail · address + map
+
+<p align="center">
+  <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.24.png" width="380" />
+</p>
+
+&nbsp;
+
+### 7 · Notable dishes, tags
+
+<p align="center">
+  <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.39.png" width="380" />
+</p>
+
+&nbsp;
+
+### 8 · Open in Apple Maps
+
+<p align="center">
+  <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.07.01.png" width="380" />
+</p>
 
 ## What it does today
 
