@@ -12,16 +12,21 @@ struct SettingsView: View {
             Color.bgBase.ignoresSafeArea()
             Form {
                 Section {
-                    SecureField("sk-ant-...", text: $apiKey)
+                    TextField("sk-ant-...", text: $apiKey)
                         .font(.dsBody)
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
+                        .textContentType(.oneTimeCode)
+                        .keyboardType(.asciiCapable)
+                        .submitLabel(.done)
                     HStack {
                         Button("Save") { save() }
-                            .disabled(apiKey.isEmpty)
+                            .buttonStyle(.borderless)
+                            .disabled(apiKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                             .foregroundStyle(Color.accent)
                         Spacer()
                         Button("Clear", role: .destructive) { clear() }
+                            .buttonStyle(.borderless)
                     }
                 } header: {
                     SectionLabel(text: "Claude API")
@@ -86,8 +91,11 @@ struct SettingsView: View {
     }
 
     private func save() {
+        let trimmed = apiKey.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
         do {
-            try KeychainStore.save(apiKey, for: KeychainStore.claudeAPIKeyAccount)
+            try KeychainStore.save(trimmed, for: KeychainStore.claudeAPIKeyAccount)
+            apiKey = trimmed
             show("Saved.", isError: false)
         } catch {
             show("Save failed: \(error)", isError: true)
