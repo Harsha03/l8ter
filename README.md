@@ -13,39 +13,46 @@ hand-off to Apple Maps.
 
 <table>
   <tr>
-    <td align="center" width="25%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.37.png" width="220" /><br/>
-      <sub>1 · Paste a TikTok URL</sub>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.37.png" width="320" /><br/>
+      <sub><b>1 · Paste a TikTok URL</b></sub>
     </td>
-    <td align="center" width="25%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.47.png" width="220" /><br/>
-      <sub>2 · oEmbed → Claude</sub>
-    </td>
-    <td align="center" width="25%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.50.png" width="220" /><br/>
-      <sub>3 · Web-verify the address</sub>
-    </td>
-    <td align="center" width="25%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.55.png" width="220" /><br/>
-      <sub>4 · Saved · 0.95 confidence</sub>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.47.png" width="320" /><br/>
+      <sub><b>2 · oEmbed → Claude</b></sub>
     </td>
   </tr>
+  <tr><td colspan="2">&nbsp;</td></tr>
   <tr>
-    <td align="center" width="25%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.10.png" width="220" /><br/>
-      <sub>5 · Saved list, filterable</sub>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.50.png" width="320" /><br/>
+      <sub><b>3 · Web-verify the address</b></sub>
     </td>
-    <td align="center" width="25%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.24.png" width="220" /><br/>
-      <sub>6 · Detail · address + map</sub>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.05.55.png" width="320" /><br/>
+      <sub><b>4 · Saved · 0.95 confidence</b></sub>
     </td>
-    <td align="center" width="25%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.39.png" width="220" /><br/>
-      <sub>7 · Notable dishes, tags</sub>
+  </tr>
+  <tr><td colspan="2">&nbsp;</td></tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.10.png" width="320" /><br/>
+      <sub><b>5 · Saved list, filterable</b></sub>
     </td>
-    <td align="center" width="25%">
-      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.07.01.png" width="220" /><br/>
-      <sub>8 · Open in Apple Maps</sub>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.24.png" width="320" /><br/>
+      <sub><b>6 · Detail · address + map</b></sub>
+    </td>
+  </tr>
+  <tr><td colspan="2">&nbsp;</td></tr>
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.06.39.png" width="320" /><br/>
+      <sub><b>7 · Notable dishes, tags</b></sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/screenshots/Simulator%20Screenshot%20-%20iPhone%2017%20Pro%20-%202026-04-25%20at%2022.07.01.png" width="320" /><br/>
+      <sub><b>8 · Open in Apple Maps</b></sub>
     </td>
   </tr>
 </table>
